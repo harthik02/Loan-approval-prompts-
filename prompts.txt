@@ -1,1 +1,184 @@
+PHASE 5 COMPLETION — IMPLEMENT MISSING LLM INTEGRATION
 
+We have completed the READ-ONLY verification of Phase 5.
+
+CURRENT VERIFIED STATE:
+- LangGraph orchestration: COMPLETE
+- Phase 4 agents: COMPLETE
+- State management: COMPLETE
+- Error handling: COMPLETE
+- 143/143 tests currently passing
+- Phase 1-4 tests: 127 passing
+- Phase 5 orchestration tests: 16 passing
+- No current regressions
+
+However, Phase 5 LLM integration is NOT IMPLEMENTED.
+
+The verification identified these missing requirements:
+
+1. LLM client/abstraction module
+2. Actual LLM invocation in LoanDecisionAgent
+3. Prompt formatting / decision framework
+4. LLM response parsing
+5. Environment-variable credential loading into the Anthropic client
+
+IMPORTANT CONSTRAINTS:
+
+- DO NOT restart or recreate the project.
+- DO NOT delete existing files.
+- DO NOT rewrite Phase 1 domain models.
+- DO NOT rewrite Phase 2 database/repository implementation.
+- DO NOT rewrite Phase 3 MCP servers.
+- DO NOT rewrite Phase 4 agents.
+- DO NOT remove or weaken existing tests.
+- DO NOT replace the LangGraph workflow.
+- Preserve all existing functionality.
+- Maintain backward compatibility.
+- Reuse existing settings/configuration where appropriate.
+- Do not hard-code API keys or credentials anywhere.
+- Do not expose credentials in source code, logs, tests, or output.
+- Keep the implementation testable without making real external LLM calls during the test suite.
+
+FIRST:
+Read and inspect:
+- ARCHITECTURE_DESIGN.md
+- src/config/settings.py
+- src/agents/
+- src/orchestration/
+- src/mcp/
+- requirements.txt
+- all existing Phase 5 tests
+- existing models/state definitions
+
+Then implement ONLY the missing LLM integration required by the architecture.
+
+REQUIRED IMPLEMENTATION:
+
+1. Create a clean LLM abstraction/client module, preferably:
+
+src/llm/claude_client.py
+
+The abstraction must:
+- load the Anthropic API key from environment/configuration
+- load the configured Claude model
+- initialize the Anthropic client safely
+- expose a simple method for sending a prompt
+- avoid hard-coded credentials
+- provide clear error handling
+- be independently testable
+
+2. Integrate the LLM client into LoanDecisionAgent.
+
+The LoanDecisionAgent must actually invoke the LLM through the abstraction.
+
+Do NOT directly scatter Anthropic API calls throughout the agent.
+
+Use dependency injection or another clean mechanism so tests can provide a mock LLM client.
+
+3. Implement the decision prompt.
+
+The prompt should provide the relevant loan/application/risk information and explicitly request a structured loan decision.
+
+The LLM should return a structured response containing, at minimum:
+
+- decision
+- risk classification
+- reasoning
+- confidence
+- relevant factors
+
+Use the exact domain fields required by the existing architecture where applicable.
+
+4. Implement robust response parsing.
+
+The parser must:
+- validate the LLM response
+- handle malformed responses
+- handle missing fields
+- reject invalid decision values
+- produce a controlled error rather than crashing
+- route failures through the existing MANUAL_REVIEW mechanism
+
+5. Preserve the existing rule-based logic only as an appropriate fallback if ARCHITECTURE_DESIGN.md explicitly permits it.
+
+Do NOT silently keep rule-based logic as the primary implementation if the architecture requires Claude reasoning.
+
+6. Credential handling:
+
+Use environment variables/configuration.
+
+Never hard-code the API key.
+
+Do not print the API key.
+
+If the configured API key is missing, provide a clear configuration error and ensure the workflow can safely handle the failure according to the existing error-handling design.
+
+7. TESTING:
+
+Add focused tests for:
+
+- LLM client initialization
+- missing API key handling
+- prompt construction
+- successful LLM invocation using a mocked client
+- valid response parsing
+- malformed response handling
+- missing response fields
+- invalid decision handling
+- LLM failure handling
+- MANUAL_REVIEW escalation
+- LoanDecisionAgent integration with mocked LLM
+- LangGraph workflow compatibility
+
+IMPORTANT:
+Tests MUST NOT make real Anthropic API calls.
+
+Use mocks/fakes for the LLM client.
+
+8. Run the COMPLETE test suite after implementation.
+
+The final result must show:
+
+- Phase 1 tests
+- Phase 2 tests
+- Phase 3 tests
+- Phase 4 tests
+- Phase 5 tests
+- new LLM integration tests
+
+No existing tests may be removed or weakened.
+
+9. VERIFY ARCHITECTURE COMPLIANCE.
+
+After implementation, compare the implementation against ARCHITECTURE_DESIGN.md Section 5.3 and explicitly report whether the LLM integration requirement is now satisfied.
+
+FINAL OUTPUT:
+
+Provide:
+
+PHASE 5 LLM INTEGRATION: COMPLETE / PARTIAL / FAILED
+
+Files created:
+Files modified:
+
+LLM Provider:
+LLM Model:
+LLM Client:
+LLM Invocation:
+Prompt Construction:
+Response Parsing:
+Credential Handling:
+Mock Testing:
+
+TEST RESULTS:
+Existing tests:
+New tests:
+Total tests:
+Failures:
+Errors:
+
+ARCHITECTURE COMPLIANCE:
+Section 5.3: PASS / FAIL
+
+Do not proceed to Phase 6.
+STOP after Phase 5 LLM integration is implemented, tested, and verified.
