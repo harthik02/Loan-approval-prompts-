@@ -1,1 +1,169 @@
+PHASE 5 ARCHITECTURAL REPAIR — LLM WORKFLOW INTEGRATION
 
+The previous READ-ONLY audit identified a real architectural gap.
+
+IMPORTANT:
+Do NOT rebuild the existing ClaudeClient implementation unless required.
+Do NOT unnecessarily rewrite working Phase 1-4 code.
+Preserve all existing functionality and tests wherever possible.
+
+CURRENT VERIFIED STATE:
+
+- ClaudeClient exists and contains a REAL Anthropic SDK invocation.
+- Response parsing/validation is implemented.
+- Credentials are safely loaded from environment/configuration.
+- 166/166 existing tests currently pass.
+- However, the LangGraph workflow does NOT correctly inject/use the LLM client.
+- LoanDecisionAgent currently contains a fallback-to-rule-based decision path.
+- The audit determined that this fallback violates ARCHITECTURE_DESIGN.md Section 5.3.
+- The workflow therefore does not currently use the LLM as the primary decision mechanism.
+- LLM failures currently do not follow the required workflow error escalation path.
+
+OBJECTIVE:
+
+Make the MINIMUM necessary changes required to bring Phase 5 into full architectural compliance.
+
+STEP 1 — READ THE ARCHITECTURE FIRST
+
+Read ARCHITECTURE_DESIGN.md Section 5.3 completely.
+
+Do not assume the previous implementation's interpretation is correct.
+
+Identify the exact requirements for:
+
+- LLM decision making
+- LoanDecisionAgent
+- workflow integration
+- error handling
+- MANUAL_REVIEW / ERROR_HANDLER behavior
+- decision response fields
+- reasoning
+- confidence
+- key decision factors
+
+STEP 2 — INSPECT CURRENT IMPLEMENTATION
+
+Inspect:
+
+- src/llm/claude_client.py
+- src/agents/loan_decision_agent.py
+- src/orchestration/nodes.py
+- src/orchestration/workflow.py
+- src/orchestration/state.py
+- src/config/settings.py
+- src/agents/agent_utils.py
+- relevant Phase 5 tests
+
+Do NOT modify anything during this inspection.
+
+STEP 3 — FIX WORKFLOW INTEGRATION
+
+The LangGraph loan-decision node must actually provide the configured ClaudeClient to LoanDecisionAgent.
+
+The execution path must become conceptually:
+
+LangGraph node
+→ LoanDecisionAgent
+→ ClaudeClient
+→ Anthropic Claude
+→ validated LLM decision
+→ workflow state
+
+Do not merely instantiate an unused ClaudeClient.
+
+Verify that the actual result returned by ClaudeClient is consumed by LoanDecisionAgent and written into the appropriate ApplicationState fields.
+
+STEP 4 — REMOVE ARCHITECTURALLY INVALID FALLBACK
+
+Remove or refactor the existing fallback-to-rule-based decision behavior if ARCHITECTURE_DESIGN.md Section 5.3 does not permit it.
+
+Do NOT silently convert an LLM failure into an ordinary loan decision.
+
+If the architecture requires escalation, LLM failures must propagate through the workflow's existing error-handling mechanism and ultimately reach MANUAL_REVIEW as specified.
+
+Preserve backward compatibility only where it does NOT violate the architecture.
+
+STEP 5 — ERROR HANDLING
+
+Ensure these cases are handled correctly:
+
+1. Missing LLM configuration
+2. Anthropic API failure
+3. Timeout/network failure
+4. Malformed LLM response
+5. Missing required response fields
+6. Invalid confidence value
+7. Invalid decision value
+8. Unexpected exception
+
+These must follow the architecture's defined error path.
+
+Do not silently produce a rule-based loan decision when the LLM is required.
+
+STEP 6 — TESTING
+
+After implementation:
+
+1. Run the existing full test suite.
+2. Fix regressions caused by the architectural correction.
+3. Add/update tests where necessary to verify ACTUAL WORKFLOW → LLM integration.
+
+The tests must verify at minimum:
+
+- Workflow creates/provides the LLM client.
+- LoanDecisionAgent receives the LLM client.
+- LoanDecisionAgent actually invokes it.
+- The LLM response affects the resulting decision.
+- LLM failure reaches the correct error handler.
+- No rule-based fallback occurs when the architecture requires LLM reasoning.
+- Existing Phase 1-4 behavior remains intact.
+- Credentials are never exposed.
+
+IMPORTANT:
+Do not "cheat" by making tests pass through mocks that bypass the integration being tested.
+
+Mocks are appropriate for preventing real external Anthropic API calls, but the workflow path itself must be exercised.
+
+STEP 7 — REGRESSION SAFETY
+
+Run the complete test suite.
+
+Target:
+
+ALL TESTS PASS
+0 REGRESSIONS
+
+Report:
+
+- Existing tests before changes
+- New/modified tests
+- Final total
+- Failures
+- Regressions
+
+STEP 8 — FINAL ARCHITECTURE AUDIT
+
+After implementation, perform a READ-ONLY verification.
+
+Explicitly answer:
+
+LLM CLIENT IMPLEMENTED: YES/NO
+REAL ANTHROPIC SDK CALL: YES/NO
+WORKFLOW INTEGRATES LLM: YES/NO
+LLM IS PRIMARY DECISION MECHANISM: YES/NO
+RULE FALLBACK REMOVED/ARCHITECTURALLY VALID: YES/NO
+ERROR ESCALATION CORRECT: YES/NO
+RESPONSE VALIDATION: YES/NO
+CREDENTIALS SAFE: YES/NO
+WORKFLOW LLM TESTED: YES/NO
+ARCHITECTURE SECTION 5.3: COMPLIANT/NON-COMPLIANT
+
+Do not proceed to Phase 6.
+
+STOP after completing the Phase 5 repair and final verification.
+
+FINAL OUTPUT SHOULD CLEARLY STATE:
+
+"PHASE 5 LLM INTEGRATION: COMPLETE" 
+
+ONLY if every architectural requirement is actually satisfied and the complete test suite passes.
