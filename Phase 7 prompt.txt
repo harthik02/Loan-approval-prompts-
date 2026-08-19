@@ -1,0 +1,350 @@
+PHASE 7 — USER INTERFACE IMPLEMENTATION
+
+We have successfully completed PHASE 6 of the existing
+`agentic-loan-approval` project.
+
+PHASE 6 STATUS:
+- REST API implemented and operational
+- API integrates with the existing loan approval workflow
+- Phase 1–5 functionality preserved
+- 166/166 tests passing
+- pip check passes
+- API health endpoint verified
+- No blocking issues
+- Phase 6 documentation completed
+
+The project is now ready for PHASE 7 — USER INTERFACE.
+
+IMPORTANT:
+This is the FINAL DEVELOPMENT PHASE.
+
+Do NOT redesign or rewrite the existing architecture.
+
+==================================================
+OBJECTIVE
+==================================================
+
+Build the Streamlit-based user interface that sits on top of
+the existing Phase 6 REST API.
+
+The architecture must be:
+
+USER
+ ↓
+STREAMLIT UI
+ ↓
+PHASE 6 REST API
+ ↓
+EXISTING LANGGRAPH WORKFLOW
+ ↓
+EXISTING AGENTS
+ ↓
+MCP SERVERS / LLM
+ ↓
+LOAN DECISION
+ ↓
+REST API RESPONSE
+ ↓
+STREAMLIT UI
+
+The UI must NOT directly implement loan approval/business logic.
+
+The UI should communicate with the REST API.
+
+==================================================
+1. STREAMLIT APPLICATION
+==================================================
+
+Use the existing Streamlit dependency/infrastructure already present
+in the project.
+
+Create or complete the main Streamlit application using the existing
+project structure.
+
+The application should provide a professional academic demonstration
+interface for the Agentic Loan Approval System.
+
+==================================================
+2. LOAN APPLICATION FORM
+==================================================
+
+Create a clear loan application form.
+
+Collect the information required by the existing API.
+
+Organize fields logically, for example:
+
+Applicant Information
+- Applicant name/identifier
+- Age
+- Employment information
+- Income
+- Employment stability
+- Other existing applicant fields required by the API
+
+Loan Information
+- Loan amount
+- Loan purpose
+- Loan term
+- Existing debt/financial information
+- Any other fields required by the existing API
+
+IMPORTANT:
+
+Do NOT invent fields unnecessarily.
+
+Inspect the existing API request models and database/application models
+and use the fields that actually exist in the project.
+
+Validate user input before submitting.
+
+==================================================
+3. SUBMISSION FLOW
+==================================================
+
+When the user clicks:
+
+"Submit Loan Application"
+
+the UI must:
+
+1. Validate the form.
+2. Send the request to the Phase 6 REST API.
+3. Display an appropriate processing/loading state.
+4. Receive the API response.
+5. Display the loan decision clearly.
+
+Do NOT call LangGraph directly from Streamlit.
+
+Do NOT call agents directly from Streamlit.
+
+Do NOT call MCP servers directly from Streamlit.
+
+The API remains the application's backend entry point.
+
+==================================================
+4. DECISION DASHBOARD
+==================================================
+
+After receiving the response, display the result clearly.
+
+The main decision should prominently show:
+
+- APPROVED
+- REJECTED
+- MANUAL REVIEW
+
+Also display the relevant information returned by the API, such as:
+
+- Applicant/profile analysis
+- Financial risk analysis
+- Compliance result
+- Risk information
+- Decision reasoning/factors
+- Application status
+- Application ID
+
+Only display information that actually exists in the API response.
+
+Do not fabricate values.
+
+==================================================
+5. USER EXPERIENCE
+==================================================
+
+Make the UI clean and professional.
+
+Use appropriate Streamlit components such as:
+
+- forms
+- columns
+- expanders
+- metrics
+- status indicators
+- tables
+- progress/loading indicators
+
+The application should look suitable for an academic project demonstration.
+
+Keep the UI simple and understandable.
+
+Do not over-engineer it.
+
+==================================================
+6. ERROR HANDLING
+==================================================
+
+Handle API failures gracefully.
+
+Examples:
+
+- API unavailable
+- invalid request
+- timeout
+- server error
+- workflow failure
+- missing response fields
+
+The user should receive a clear message such as:
+
+"Unable to process the application. Please try again."
+
+Do NOT expose:
+- stack traces
+- API keys
+- credentials
+- internal paths
+- sensitive implementation details
+
+==================================================
+7. API INTEGRATION
+==================================================
+
+Use the existing Phase 6 API.
+
+The API base URL must come from configuration/environment rather
+than being hard-coded where possible.
+
+The UI should communicate with the existing endpoint(s), especially:
+
+POST /api/v1/...
+
+Use the actual endpoint and request schema implemented during Phase 6.
+
+Before implementing, inspect the Phase 6 API code and documentation
+to determine the exact endpoint and payload structure.
+
+==================================================
+8. TESTING
+==================================================
+
+Add appropriate tests for the UI/application integration where
+practical.
+
+At minimum verify:
+
+- application starts
+- API connection works
+- valid form data can be submitted
+- successful API response is displayed
+- API errors are handled
+- invalid input is handled
+
+MOST IMPORTANT:
+
+Do NOT break the existing test suite.
+
+Run:
+
+pytest -q
+
+The existing 166 tests must continue passing.
+
+Then run:
+
+pip check
+
+==================================================
+9. DOCUMENTATION
+==================================================
+
+Create:
+
+PHASE_7_SUMMARY.md
+
+Document:
+
+- Phase 7 objectives
+- UI implementation
+- API integration
+- user workflow
+- files created
+- files modified
+- tests added
+- test results
+- how to start the API
+- how to start Streamlit
+- how to use the application
+- known warnings/issues
+
+Update README.md with complete run instructions if necessary.
+
+==================================================
+10. FINAL END-TO-END VERIFICATION
+==================================================
+
+After implementation, actually verify the complete system:
+
+1. Start the backend API.
+2. Verify:
+
+GET /api/v1/health
+
+3. Start the Streamlit UI.
+4. Open the UI.
+5. Submit a realistic test loan application.
+6. Verify the request reaches the API.
+7. Verify the existing workflow executes.
+8. Verify a decision is returned.
+9. Verify the decision appears correctly in the UI.
+10. Verify error handling.
+
+Then run:
+
+pytest -q
+
+and:
+
+pip check
+
+Do not claim success without actually testing it.
+
+==================================================
+11. DO NOT IMPLEMENT PHASE 8 / FUTURE WORK
+==================================================
+
+Do not add unrelated features.
+
+Do not:
+- rewrite agents
+- rewrite MCP servers
+- rewrite LangGraph
+- replace the API
+- change dependency versions unnecessarily
+- remove tests
+- weaken tests
+- add authentication unless already required by the project
+- add speculative production infrastructure
+- add unrelated AI functionality
+
+Keep the scope strictly within PHASE 7.
+
+==================================================
+FINAL REPORT
+==================================================
+
+When finished, provide:
+
+PHASE 7 COMPLETION REPORT
+
+Include:
+
+- UI status
+- Files created
+- Files modified
+- API integration status
+- UI functionality
+- End-to-end test result
+- Total tests passed/failed
+- pip check result
+- API health result
+- Streamlit startup result
+- Sample application submission result
+- Remaining warnings
+- Remaining blockers
+- Whether the entire 7-phase project is COMPLETE
+- Any recommended final demonstration steps
+
+STOP after Phase 7.
+
+Do not begin any additional phase or feature work.
