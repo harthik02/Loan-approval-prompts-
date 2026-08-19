@@ -1,0 +1,268 @@
+You are working on the existing project:
+
+agentic-loan-approval
+
+Your job is to DEBUG AND STABILIZE THE EXISTING PROJECT. Do not rebuild it from scratch and do not unnecessarily change its architecture or intended functionality.
+
+IMPORTANT:
+- Inspect the repository thoroughly before making changes.
+- Do NOT blindly upgrade all packages to their latest versions.
+- Do NOT modify tests simply to make them pass.
+- Preserve the intended behavior and architecture of the application.
+- Make the minimum safe changes necessary.
+- After every meaningful fix, run the relevant tests.
+- Continue debugging until the full test suite passes, if reasonably possible.
+
+CURRENT ENVIRONMENT:
+- Ubuntu
+- Python 3.12.3
+- Virtual environment: .venv
+- Project: agentic-loan-approval
+
+CURRENT PROBLEMS:
+
+1. DEPENDENCY CONFLICT
+
+The current requirements include approximately:
+
+anthropic==0.25.0
+langchain==0.2.16
+langchain-anthropic==0.1.12
+langgraph==0.0.56
+
+pip reports:
+
+langchain-anthropic 0.1.12 depends on anthropic<1 and >=0.28.0
+
+but the project explicitly requires:
+
+anthropic==0.25.0
+
+This causes ResolutionImpossible during installation.
+
+There were also previous dependency conflicts involving:
+- langchain
+- langchain-anthropic
+- langgraph
+- langchain-core
+
+Inspect the actual requirements.txt and package metadata before deciding the correct compatible versions.
+
+DO NOT simply install random/latest versions.
+
+Determine a compatible dependency set that works with the existing source code and Python 3.12.
+
+2. LANGGRAPH STATE/NODE NAME COLLISION
+
+The test suite previously failed with:
+
+ValueError: 'profile_analysis' is already being used as a state key
+
+The repository appears to contain something similar to:
+
+workflow.add_node("profile_analysis", profile_analysis_node)
+
+while ApplicationState also contains a state field/key named:
+
+profile_analysis
+
+Inspect:
+- src/orchestration/workflow.py
+- src/orchestration/state.py
+- src/orchestration/nodes.py
+- all relevant LangGraph workflow code
+- tests/integration/test_langgraph_workflow.py
+
+Determine the correct fix based on the intended architecture.
+
+If the problem is indeed a node-name/state-key collision, rename the NODE identifier rather than removing or incorrectly renaming the state field.
+
+For example, a possible solution could be:
+
+workflow.add_node("profile_analysis_node", profile_analysis_node)
+
+and update all graph edges that reference the node accordingly.
+
+BUT DO NOT blindly apply this example. First inspect the entire workflow and determine the correct implementation.
+
+3. CURRENT TEST STATUS
+
+After dependency installation and some changes, the project reached approximately:
+
+162 passed
+4 failed
+166 warnings
+
+The remaining failures were in:
+
+tests/integration/test_langgraph_workflow.py
+
+The failures included errors similar to:
+
+ValueError: 'profile_analysis' is already being used as a state key
+
+Inspect the actual current test output rather than assuming these are the only remaining issues.
+
+TASK:
+
+STEP 1 — Inspect the project
+
+Inspect:
+
+- requirements.txt
+- README.md
+- project structure
+- src/
+- tests/
+- src/orchestration/
+- src/orchestration/state.py
+- src/orchestration/workflow.py
+- src/orchestration/nodes.py
+- relevant MCP code
+- relevant LLM/Claude integration code
+- relevant configuration files
+
+Understand how the application is supposed to work before changing anything.
+
+STEP 2 — Diagnose dependencies
+
+Run:
+
+python --version
+pip --version
+pip list
+pip check
+
+Inspect requirements.txt.
+
+Determine which versions of:
+- anthropic
+- langchain
+- langchain-core
+- langchain-anthropic
+- langgraph
+- related packages
+
+are compatible with:
+- Python 3.12
+- the existing source code
+- the existing tests
+
+Do not unnecessarily upgrade unrelated packages.
+
+Update requirements.txt only when necessary.
+
+STEP 3 — Fix installation
+
+Create a clean/reproducible environment if necessary.
+
+Install the corrected requirements.
+
+Then run:
+
+pip check
+
+There should be no dependency conflicts.
+
+STEP 4 — Fix LangGraph architecture
+
+Inspect ApplicationState and the workflow definition carefully.
+
+Determine whether "profile_analysis" is simultaneously being used as:
+- a state key
+- a LangGraph node name
+
+If so, resolve the collision correctly while preserving the state field.
+
+Check EVERY reference to the affected node:
+
+grep -R "profile_analysis" -n src tests --exclude-dir=__pycache__
+
+Update graph edges, conditional edges, entry points, and any other node references consistently.
+
+Do not modify unrelated functionality.
+
+STEP 5 — Run targeted tests
+
+First run:
+
+pytest -q tests/integration/test_langgraph_workflow.py
+
+If failures remain, inspect the actual traceback and fix the underlying application problem.
+
+Then run:
+
+pytest -q
+
+STEP 6 — Do not cheat
+
+Do NOT:
+- delete tests
+- skip tests
+- comment out assertions
+- weaken assertions
+- hard-code fake outputs
+- bypass application logic
+- change tests just to make them green
+- replace the architecture with a simpler unrelated implementation
+
+If a test itself is genuinely incorrect because the intended specification changed, explain why before changing it.
+
+STEP 7 — Check warnings
+
+After all tests pass, inspect important warnings.
+
+In particular, distinguish:
+- harmless deprecation warnings
+- actual compatibility problems
+- application bugs
+
+Do not spend time eliminating harmless warnings unless they indicate a future-breaking issue.
+
+STEP 8 — Verify application startup
+
+After the test suite passes, verify that the actual application can start.
+
+Inspect the project's README/scripts and determine the correct startup command.
+
+Do not invent a startup command if one already exists.
+
+Verify that:
+- imports work
+- configuration loads
+- LangGraph workflow compiles
+- MCP components initialize correctly
+- Streamlit/application startup works if applicable
+
+STEP 9 — Final report
+
+When finished, provide a concise report containing:
+
+1. Root cause of the dependency conflict.
+2. Exact dependency changes made.
+3. Root cause of the LangGraph failure.
+4. Exact source files changed.
+5. Summary of code changes.
+6. Test command used.
+7. Final test result, e.g.:
+
+X passed, 0 failed
+
+8. Result of:
+
+pip check
+
+9. Application startup verification result.
+10. Any remaining warnings/issues that are non-blocking.
+
+MOST IMPORTANT:
+
+Do not stop after fixing the first error.
+
+Keep iterating:
+
+diagnose → change → test → inspect failure → fix → test again
+
+until the project is genuinely stable.
+
+Start by inspecting the repository. Do not make changes until you understand the dependency graph and LangGraph workflow.
