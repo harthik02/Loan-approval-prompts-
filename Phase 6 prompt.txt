@@ -1,0 +1,313 @@
+PHASE 6 — APPLICATION API + USER INTERFACE
+
+We are continuing the EXISTING `agentic-loan-approval` project.
+
+PHASE 1–5 are already completed and verified. DO NOT restart or redesign them.
+
+Current stable baseline:
+- 166/166 tests passing
+- pip check passes
+- LangGraph workflow compiles successfully
+- Configuration loads successfully
+- LLM client operational
+- MCP servers operational
+- Agent integration operational
+- Existing architecture is functional
+- Only remaining warnings are non-blocking Python 3.12 datetime.utcnow() deprecation warnings
+
+The project already contains:
+- SQLAlchemy/database layer
+- application data/models
+- MCP servers
+- specialized agents
+- LLM/Claude integration
+- LangGraph orchestration
+- error handling
+- configuration
+- comprehensive tests
+
+Now implement PHASE 6.
+
+OBJECTIVE:
+Turn the existing loan-approval backend/workflow into a usable end-user application by adding the API and UI layer WITHOUT breaking the existing architecture.
+
+IMPORTANT:
+The existing LangGraph workflow and agents are the source of truth for loan processing.
+
+The UI/API must CALL the existing workflow.
+Do NOT duplicate loan-approval logic inside the API or UI.
+
+==================================================
+PHASE 6 REQUIREMENTS
+==================================================
+
+1. API LAYER
+
+Create or complete the appropriate API layer using the framework already intended by the project architecture.
+
+The API should provide a clean entry point for submitting a loan application and obtaining the resulting decision.
+
+At minimum support:
+
+POST /api/loan/apply
+- Accept applicant/loan application data
+- Validate the request
+- Invoke the existing LangGraph loan approval workflow
+- Return the final decision and relevant analysis
+- Handle workflow failures safely
+
+GET /api/loan/{application_id}
+- Retrieve the relevant application/decision information
+- Return an appropriate response when the application does not exist
+
+GET /api/health
+- Return application health/status
+
+Use proper:
+- request validation
+- response models
+- HTTP status codes
+- exception handling
+- logging
+- configuration management
+
+Do not expose secrets or internal implementation details.
+
+==================================================
+2. USER INTERFACE
+==================================================
+
+Create the user-facing interface using the Streamlit infrastructure already present/intended in the project.
+
+The UI should allow a user to:
+
+1. Enter applicant information.
+2. Enter loan information.
+3. Submit the application.
+4. Trigger the existing loan approval workflow.
+5. Display processing status.
+6. Display the final decision.
+
+The result should clearly display:
+
+- Loan decision:
+  APPROVED / REJECTED / MANUAL REVIEW
+- Overall risk information
+- Applicant/profile analysis
+- Financial risk analysis
+- Compliance result
+- Important decision factors
+- Any relevant warnings/errors
+
+Make the UI clean, understandable and suitable for an academic demonstration project.
+
+Do NOT put business/approval logic directly into Streamlit.
+
+==================================================
+3. API → LANGGRAPH INTEGRATION
+==================================================
+
+The architecture must remain:
+
+User
+  ↓
+Streamlit UI
+  ↓
+API/Application Layer
+  ↓
+Existing LangGraph Workflow
+  ↓
+Existing Agents
+  ↓
+Existing MCP Servers / LLM
+  ↓
+Decision
+  ↓
+API Response
+  ↓
+UI
+
+Reuse the existing ApplicationState and workflow implementation.
+
+Do not create a second loan approval workflow.
+
+Do not duplicate agent logic.
+
+Do not bypass MCP/agent architecture.
+
+==================================================
+4. ERROR HANDLING
+==================================================
+
+Use the existing error-handling architecture wherever possible.
+
+Handle:
+- invalid input
+- missing application data
+- workflow failures
+- LLM failures
+- MCP failures
+- unexpected exceptions
+- unavailable services
+
+The UI must show user-friendly errors.
+
+Do not expose stack traces, API keys, credentials or internal secrets to the user.
+
+==================================================
+5. CONFIGURATION
+==================================================
+
+Use the existing configuration/settings system.
+
+Do NOT hard-code:
+- API keys
+- Anthropic credentials
+- database credentials
+- host/port values
+- environment-specific configuration
+
+Use `.env` / existing settings mechanisms where appropriate.
+
+Do not unnecessarily modify dependency versions.
+
+==================================================
+6. TESTING
+==================================================
+
+Add tests for the Phase 6 functionality.
+
+At minimum test:
+
+API:
+- health endpoint
+- valid loan application request
+- invalid request validation
+- application lookup
+- missing application
+- workflow failure handling
+
+Integration:
+- API correctly invokes the existing workflow
+- workflow result is correctly transformed into API response
+
+UI:
+- Test UI/business integration where practical without introducing unnecessary complexity.
+
+CRITICAL:
+Do NOT remove or weaken existing tests.
+
+The existing 166 tests must continue passing.
+
+==================================================
+7. DOCUMENTATION
+==================================================
+
+Create/update appropriate documentation for Phase 6.
+
+Create:
+
+PHASE_6_SUMMARY.md
+
+Include:
+- Phase 6 objectives
+- API implementation
+- UI implementation
+- workflow integration
+- files created/modified
+- tests added
+- final test results
+- known warnings
+- how to run the application
+- API endpoints
+- how to use the UI
+
+Also update README.md if necessary so a new developer can run the application.
+
+==================================================
+8. PRESERVE THE ARCHITECTURE
+==================================================
+
+DO NOT:
+- rewrite working agents
+- rewrite MCP servers
+- rewrite the LangGraph workflow
+- replace the LLM implementation
+- remove existing functionality
+- remove existing tests
+- downgrade dependencies
+- introduce unnecessary frameworks
+- hard-code credentials
+- create duplicate business logic
+- implement Phase 7 functionality
+
+Make the smallest clean architectural changes necessary.
+
+==================================================
+9. VERIFICATION
+==================================================
+
+After implementation, actually run:
+
+pytest -q
+
+Then:
+
+pip check
+
+Then verify:
+- LangGraph workflow compilation
+- API startup
+- health endpoint
+- loan application endpoint
+- Streamlit application startup
+- end-to-end API → workflow → decision flow
+
+If tests fail:
+1. Identify the root cause.
+2. Fix the implementation.
+3. Run the tests again.
+4. Repeat until the existing suite and Phase 6 tests pass.
+
+Do NOT claim success without actually executing the tests.
+
+==================================================
+10. FINAL REPORT
+==================================================
+
+When finished, provide a concise PHASE 6 COMPLETION REPORT containing:
+
+- Phase 6 status
+- Files created
+- Files modified
+- API endpoints
+- UI functionality
+- LangGraph integration status
+- Tests added
+- Existing tests result
+- Total tests passed/failed
+- pip check result
+- API verification result
+- UI verification result
+- Remaining warnings
+- Remaining blockers
+- Whether the project is ready for PHASE 7
+
+IMPORTANT:
+Do NOT start Phase 7.
+
+Stop after completing and verifying Phase 6.
+
+The goal is:
+
+PHASE 6 COMPLETE
++
+API WORKING
++
+UI WORKING
++
+EXISTING WORKFLOW PRESERVED
++
+ALL TESTS PASSING
++
+READY FOR PHASE 7
